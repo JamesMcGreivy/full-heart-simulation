@@ -1,0 +1,60 @@
+# Ventricular model simulation parameters based on MedalCare-XL paper
+# Simplified first pass without APD gradients
+
+# Simulation parameters
+dt = 0.05                # Time step (ms)
+timedt = 1.0             # Output time step (ms) for visualization
+
+# Numerical settings
+spacedt = 1              # Output spatial resolution
+bidomain = 0             # Using monodomain for simplicity
+parab_solve = 1          # Use parabolic solve
+cg_tol_ellip = 1e-8      # CG tolerance for elliptic problem
+mass_lumping = 1         # Use mass lumping for efficiency
+
+# Define cellular models for different regions
+num_imp_regions = 2
+
+# Regular myocardium (region 0)
+imp_region[0].im = MitchellSchaeffer
+imp_region[0].num_IDs = 1
+imp_region[0].ID[0] = 0
+
+# Fast conducting endocardium (region 1)
+imp_region[1].im = MitchellSchaeffer
+imp_region[1].num_IDs = 1
+imp_region[1].ID[0] = 1
+
+# Conductivity parameters for different regions
+num_gregions = 2
+
+# Regular myocardium (region 0)
+gregion[0].num_IDs = 1
+gregion[0].ID[0] = 0
+gregion[0].g_il = 0.6    # Longitudinal conductivity
+gregion[0].g_it = 0.3    # Transverse conductivity (4:2:1 ratio)
+gregion[0].g_in = 0.15   # Normal conductivity
+
+# Fast conducting endocardium (region 1)
+gregion[1].num_IDs = 1
+gregion[1].ID[0] = 1
+gregion[1].g_il = 2.0    # Isotropic fast conducting endocardium
+gregion[1].g_it = 2.0
+gregion[1].g_in = 2.0
+
+# Stimulation parameters
+num_stim = 1
+stimulus[0].start = 0.0
+stimulus[0].strength = -80  # Stimulation strength
+stimulus[0].duration = 2.0  # Stimulus duration (ms)
+
+# Local activation time calculation
+num_LATs = 1
+lats[0].ID = activation
+lats[0].all = 0          # Only detect first activation
+lats[0].measurand = 0    # Determine LAT from transmembrane voltage
+lats[0].mode = 0         # Take maximum slope to determine LAT
+lats[0].threshold = -10  # Threshold for activation detection (mV)
+
+# Visualization settings
+gridout_i = 2            # Output for visualization
