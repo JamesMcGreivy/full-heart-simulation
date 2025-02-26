@@ -2,14 +2,19 @@
 # Simplified first pass without APD gradients
 
 # Simulation parameters
-dt = 0.05                # Time step (ms)
+dt = 0.1                # Time step (ms)
 timedt = 1.0             # Output time step (ms) for visualization
+
+# Speed up
+cg_tol_ellip = 1e-4      # CG tolerance for elliptic problem
+
+# Visualization settings
+gridout_i = 2            # Output for visualizationg
 
 # Numerical settings
 spacedt = 1              # Output spatial resolution
 bidomain = 0             # Using monodomain for simplicity
 parab_solve = 1          # Use parabolic solve
-cg_tol_ellip = 1e-8      # CG tolerance for elliptic problem
 mass_lumping = 1         # Use mass lumping for efficiency
 
 # Define cellular models for different regions
@@ -55,6 +60,3 @@ lats[0].all = 0          # Only detect first activation
 lats[0].measurand = 0    # Determine LAT from transmembrane voltage
 lats[0].mode = 0         # Take maximum slope to determine LAT
 lats[0].threshold = -10  # Threshold for activation detection (mV)
-
-# Visualization settings
-gridout_i = 2            # Output for visualization
