@@ -20,7 +20,7 @@ def parser():
                         type=float, default=500.0,
                         help='Duration of simulation (ms).')
     parser.add_argument('--stim-strength',
-                        type=float, default=-80.0,
+                        type=float, default=50,
                         help='Stimulus strength (mV).')
     parser.add_argument('--mesh-base',
                         type=str, default='./data/instance_001_lowres',
@@ -32,7 +32,7 @@ def jobID(args):
     Generate name of top level output directory.
     """
     today = date.today()
-    return '{}_ventricle_model_{}ms_np{}'.format(today.isoformat(), args.tend, args.np)
+    return 'data/{}_ventricle_model_{}ms_np{}'.format(today.isoformat(), args.tend, args.np)
 
 @tools.carpexample(parser, jobID)
 def run(args, job):
