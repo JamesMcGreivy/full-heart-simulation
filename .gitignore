@@ -177,7 +177,7 @@ cython_debug/
 .DS_Store
 
 # Data directory
-data/*
+/data/*
 
 # openCARP files:
 *.trc
