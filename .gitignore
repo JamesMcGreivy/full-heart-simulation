@@ -179,7 +179,7 @@ cython_debug/
 # Data directory
 /data/*
 # But keep the data directory itself (by negating the previous pattern)
-!/data/.
+!/data/.gitkeep
 
 # openCARP files:
 *.trc
