@@ -2,8 +2,8 @@
 # Simplified first pass without APD gradients
 
 # Simulation parameters
-dt = 0.5                # Time step (ms)
-timedt = 2.0            # Output time step (ms) for visualization
+dt = 0.1                # Time step (ms)
+timedt = 1.0            # Output time step (ms) for visualization
 
 # Stimulation parameters
 num_stim = 1
@@ -19,7 +19,7 @@ gridout_i = 2            # Output for visualization
 
 # Numerical settings
 spacedt = 1              # Output spatial resolution
-bidomain = 0             # Using monodomain for simplicity
+bidomain = 1             # Using monodomain for simplicity
 parab_solve = 1          # Use parabolic solve
 
 # Define cellular models for different regions
