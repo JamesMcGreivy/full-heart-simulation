@@ -1124,6 +1124,48 @@ def convert_to_opencarp(volume_mesh, surface_mesh, output_prefix, output_path):
     
     print(f"Created {output_prefix}.surf with surface triangles")
 
+def scale_pts_file(file_path, scale_factor=10000):
+    """
+    Read a .pts file, scale the points by the given factor, and save back to the same file.
+    
+    Args:
+        file_path (str): Path to the .pts file
+        scale_factor (float): Scaling factor to apply to coordinates (default: 10000 for cm to micrometers)
+    """
+    print(f"Reading points from {file_path}")
+    
+    # Read the points file
+    with open(file_path, 'r') as f:
+        # Read the number of points from the first line
+        n_points = int(f.readline().strip())
+        
+        # Initialize the points array
+        points = np.zeros((n_points, 3))
+        
+        # Read each point
+        for i in range(n_points):
+            line = f.readline().strip()
+            # Parse x, y, z coordinates
+            x, y, z = map(float, line.split())
+            points[i] = [x, y, z]
+    
+    print(f"Loaded {n_points} points with shape {points.shape}")
+    
+    # Scale the points
+    scaled_points = points * scale_factor
+    print(f"Scaled points by factor of {scale_factor}")
+    
+    # Write the scaled points back to the file
+    with open(file_path, 'w') as f:
+        # Write the number of points
+        f.write(f"{n_points}\n")
+        
+        # Write each scaled point
+        for i in range(n_points):
+            f.write(f"{scaled_points[i, 0]} {scaled_points[i, 1]} {scaled_points[i, 2]}\n")
+    
+    print(f"Saved scaled points back to {file_path}") 
+
 # Main function to read VTK files and convert to openCARP format
 def vtk_to_opencarp(vtp_filename, vtu_filename, output_prefix, output_path):
     # Ensure the output directory exists
@@ -1137,5 +1179,7 @@ def vtk_to_opencarp(vtp_filename, vtu_filename, output_prefix, output_path):
     
     print(f"Converting to openCARP format. Output directory: {output_path}")
     convert_to_opencarp(volume_mesh, surface_mesh, output_prefix, output_path)
+
+    scale_pts_file(os.path.join(output_path, output_prefix+".pts"), scale_factor=1000) # Convert the output mesh from mm to micrometers for openCARP
     
     print(f"Conversion complete! Files saved to: {output_path}")

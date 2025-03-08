@@ -337,51 +337,6 @@ def interpolate_uvcs(input_pts_path, input_UVC_path, output_pts_path, output_UVC
     print("UVC interpolation completed successfully!")
     return output_uvcs
 
-import numpy as np
-
-def scale_pts_file(file_path, scale_factor=10000):
-    """
-    Read a .pts file, scale the points by the given factor, and save back to the same file.
-    
-    Args:
-        file_path (str): Path to the .pts file
-        scale_factor (float): Scaling factor to apply to coordinates (default: 10000 for cm to micrometers)
-    """
-    print(f"Reading points from {file_path}")
-    
-    # Read the points file
-    with open(file_path, 'r') as f:
-        # Read the number of points from the first line
-        n_points = int(f.readline().strip())
-        
-        # Initialize the points array
-        points = np.zeros((n_points, 3))
-        
-        # Read each point
-        for i in range(n_points):
-            line = f.readline().strip()
-            # Parse x, y, z coordinates
-            x, y, z = map(float, line.split())
-            points[i] = [x, y, z]
-    
-    print(f"Loaded {n_points} points with shape {points.shape}")
-    
-    # Scale the points
-    scaled_points = points * scale_factor
-    print(f"Scaled points by factor of {scale_factor}")
-    
-    # Write the scaled points back to the file
-    with open(file_path, 'w') as f:
-        # Write the number of points
-        f.write(f"{n_points}\n")
-        
-        # Write each scaled point
-        for i in range(n_points):
-            f.write(f"{scaled_points[i, 0]} {scaled_points[i, 1]} {scaled_points[i, 2]}\n")
-    
-    print(f"Saved scaled points back to {file_path}") 
-
-
 if __name__ == "__main__":
     # Create an argument parser
     parser = argparse.ArgumentParser(description='This script is used to transfer region labels between an input (original) and output (downsampled) mesh in openCARP.')
@@ -402,4 +357,4 @@ if __name__ == "__main__":
 
     transfer_regions(input_pts, input_surf, output_pts, output_surf, output_surf) # Transfer the region labels from the input mesh to the output mesh
     interpolate_uvcs(input_pts, input_UVCs, output_pts, output_UVCs) # Interpolate the UVCs from the input mesh points to the output mesh points
-    scale_pts_file(output_pts, scale_factor=1000) # Convert the output mesh from mm to micrometers for openCARP
+    

@@ -16,10 +16,11 @@ fi
 
 meshtool resample mesh \
 -msh=${input_mesh_path} \
--avrg=0.8 \
+-avrg=1.4 \
 -outmsh=${output_mesh_path} \
 -ifmt=carp_txt \
--ofmt=carp_txt
+-ofmt=carp_txt \
+-tags=0
 
 meshtool extract surface \
 -msh=${output_mesh_path} \
