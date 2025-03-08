@@ -6,10 +6,15 @@ dt = 0.1                # Time step (ms)
 timedt = 1.0            # Output time step (ms) for visualization
 
 # Stimulation parameters
-num_stim = 1
+num_stim = 2
+
 stimulus[0].start = 0.0
-stimulus[0].duration = 3.0    # Stimulus duration (ms)
+stimulus[0].duration = 1.5    # Stimulus duration (ms)
 stimulus[0].stimtype = 9
+
+stimulus[1].start = 15.0
+stimulus[1].duration = 1.5    # Stimulus duration (ms)
+stimulus[1].stimtype = 9
 
 # Speed up
 cg_tol_ellip = 1e-4      # CG tolerance for elliptic problem

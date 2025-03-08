@@ -14,12 +14,7 @@ from pyvista import themes
 import vtk
 from vtk.util import numpy_support
 
-
-
 # ~~ For Loading the openCARP meshes into python ~~ #
-
-
-
 class OpenCARPMeshReader:
     """
     Class to read openCARP mesh files (.pts, .elem, .surf) and UVC data (.csv)
@@ -855,9 +850,24 @@ def visualize_fibers(points, triangles, triangle_regions, fiber_dirs,
 
 
 def visualize_fascicular_sites(points, triangles, triangle_regions, is_fascicular_site, 
-                               sphere_scale=0.005):
+                               fascicular_site_tag, sphere_scale=0.005):
     """
-    Visualize fascicular sites on the endocardial surface.
+    Visualize fascicular sites on the endocardial surface with color coding by site type.
+    
+    Parameters:
+    -----------
+    points : ndarray
+        Coordinates of mesh vertices
+    triangles : ndarray
+        Triangle vertex indices
+    triangle_regions : ndarray
+        Region labels for each triangle
+    is_fascicular_site : ndarray
+        Boolean array indicating fascicular sites
+    fascicular_site_tag : ndarray
+        Integer array with site type labels (1-5)
+    sphere_scale : float
+        Scale factor for visualization spheres
     """
     # Set up a nice theme for visualization
     my_theme = themes.DarkTheme()
@@ -890,6 +900,18 @@ def visualize_fascicular_sites(points, triangles, triangle_regions, is_fascicula
     fascicular_points = points[fascicular_indices]
     fascicular_cloud = pv.PolyData(fascicular_points)
     
+    # Add site tags as a scalar field for coloring
+    site_tags = fascicular_site_tag[fascicular_indices]
+    fascicular_cloud['site_tag'] = site_tags
+    
+    # Define colors for each site type
+    site_colors = {
+        1: 'red',         # LV anterior
+        2: 'blue',        # LV posterior
+        3: 'green',       # Septal
+        4: 'purple',      # RV moderator band
+    }
+    
     # Create a plotter
     plotter = pv.Plotter()
     plotter.add_text("Endocardium with Fascicular Sites", font_size=16, color="black")
@@ -898,17 +920,35 @@ def visualize_fascicular_sites(points, triangles, triangle_regions, is_fascicula
     plotter.add_mesh(endocardium_mesh, color='mistyrose', opacity=0.7, 
                      label="Endocardial Surface")
     
-    # Add spheres for fascicular sites
-    # Use glyph to create spheres at fascicular sites
-    spheres = fascicular_cloud.glyph(
-        geom=pv.Sphere(radius=1),
-        scale=False,
-        factor=sphere_scale
-    )
-    plotter.add_mesh(spheres, color="red", label="Fascicular Sites")
+    # Add spheres for each fascicular site type separately
+    for tag, color in site_colors.items():
+        # Filter to this site type
+        site_indices = np.where(site_tags == tag)[0]
+        if len(site_indices) == 0:
+            continue
+            
+        site_points = fascicular_points[site_indices]
+        site_cloud = pv.PolyData(site_points)
+        
+        # Create spheres for this site type
+        spheres = site_cloud.glyph(
+            geom=pv.Sphere(radius=1),
+            scale=False,
+            factor=sphere_scale
+        )
+        
+        # Get the site name for the legend
+        site_names = {
+            1: "LV Anterior",
+            2: "LV Posterior",
+            3: "Septal",
+            4: "RV Moderator Band",
+        }
+        
+        plotter.add_mesh(spheres, color=color, label=site_names[tag])
     
     # Add legend
-    plotter.add_legend(size=(0.2, 0.2), loc='upper right')
+    plotter.add_legend(size=(0.3, 0.3), loc='upper right')
     
     # Set camera position for a good view
     plotter.camera_position = 'xz'
@@ -920,7 +960,6 @@ def visualize_fascicular_sites(points, triangles, triangle_regions, is_fascicula
     plotter.screenshot('../figures/fascicular_sites.png') 
     
     return plotter
-
 
 
 # ~~ For converting .vtp and .vtu mesh formats into openCARP formats ~~

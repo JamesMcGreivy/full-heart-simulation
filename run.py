@@ -43,13 +43,15 @@ def run(args, job):
     cmd = tools.carp_cmd(os.path.join(EXAMPLE_DIR, 'simple.par'))
     
     # Override mesh paths from the parameter file
-    cmd += ['-meshname', os.path.join(mesh_base, "heart_instance_001_lowres")]
+    cmd += ['-meshname', os.path.join(mesh_base, "instance_001_lowres")]
     
     # Override parameter file settings as needed
     cmd += ['-simID', job.ID,
             '-tend', args.tend,
             '-stimulus[0].strength', args.stim_strength,
-            '-stimulus[0].vtx_file', os.path.join(mesh_base, "fascicular_stim.vtx")]
+            '-stimulus[0].vtx_file', os.path.join(mesh_base, "immediate_stim.vtx"),
+            '-stimulus[1].strength', args.stim_strength,
+            '-stimulus[1].vtx_file', os.path.join(mesh_base, "delayed_stim.vtx")]
     
     # Handle region files for fast endocardium and regular myocardium
     # The regions are already defined in the .elem file as explained

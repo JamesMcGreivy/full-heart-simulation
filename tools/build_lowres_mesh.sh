@@ -16,7 +16,7 @@ fi
 
 meshtool resample mesh \
 -msh=${input_mesh_path} \
--avrg=1 \
+-avrg=0.8 \
 -outmsh=${output_mesh_path} \
 -ifmt=carp_txt \
 -ofmt=carp_txt
