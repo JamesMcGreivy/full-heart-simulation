@@ -8,10 +8,12 @@ timedt = 1.0            # Output time step (ms) for visualization
 # Stimulation parameters
 num_stim = 2
 
+# 4 fascicular sites of earliest breakthrough
 stimulus[0].start = 0.0
 stimulus[0].duration = 1.5    # Stimulus duration (ms)
 stimulus[0].stimtype = 9
 
+# Delayed moderator fascicular site
 stimulus[1].start = 15.0
 stimulus[1].duration = 1.5    # Stimulus duration (ms)
 stimulus[1].stimtype = 9
@@ -41,7 +43,7 @@ imp_region[1].num_IDs = 1
 imp_region[1].ID[0] = 1
 
 # Conductivity parameters for different regions
-num_gregions = 2 # 3
+num_gregions = 3
 
 # Regular myocardium (region 0)
 gregion[0].num_IDs = 1
