@@ -2,7 +2,7 @@
 # Simplified first pass without APD gradients
 
 # Simulation parameters
-dt = 0.1                # Time step (ms)
+dt = 0.5                # Time step (ms)
 timedt = 1.0            # Output time step (ms) for visualization
 
 # Stimulation parameters
@@ -24,7 +24,7 @@ gridout_i = 2            # Output for visualization
 
 # Numerical settings
 spacedt = 1              # Output spatial resolution
-bidomain = 1             # Using monodomain for simplicity
+bidomain = 0             # Using monodomain for simplicity
 parab_solve = 1          # Use parabolic solve
 
 # Define cellular models for different regions
@@ -41,7 +41,7 @@ imp_region[1].num_IDs = 1
 imp_region[1].ID[0] = 1
 
 # Conductivity parameters for different regions
-num_gregions = 3
+num_gregions = 2 # 3
 
 # Regular myocardium (region 0)
 gregion[0].num_IDs = 1
@@ -56,23 +56,23 @@ gregion[0].g_in = 0.05
 # Fast conducting endocardium (region 1)
 gregion[1].num_IDs = 1
 gregion[1].ID[0] = 1
-gregion[1].g_el = 0.6   # Principal fiber direction (S/m)
-gregion[1].g_il = 0.2
-gregion[1].g_et = 0.6   # Sheet direction (S/m) - 4:2:1 ratio mentioned in paper
-gregion[1].g_it = 0.2
-gregion[1].g_en = 0.6  # Normal direction (S/m) - 4:2:1 ratio mentioned in paper
-gregion[1].g_in = 0.2
-gregion[1].g_mult = 3 # 3 is more physical
+gregion[1].g_el = 0.9   # Principal fiber direction (S/m)
+gregion[1].g_il = 0.3
+gregion[1].g_et = 0.9   # Sheet direction (S/m)
+gregion[1].g_it = 0.3
+gregion[1].g_en = 0.9  # Normal direction (S/m)
+gregion[1].g_in = 0.3
+gregion[1].g_mult = 3
 
 # Ablation (region 2)
-gregion[1].num_IDs = 1
-gregion[1].ID[0] = 2
-gregion[1].g_el = 0.001
-gregion[1].g_il = 0.001
-gregion[1].g_et = 0.001
-gregion[1].g_it = 0.001
-gregion[1].g_en = 0.001
-gregion[1].g_in = 0.001
+# gregion[1].num_IDs = 1
+# gregion[1].ID[0] = 2
+# gregion[1].g_el = 0.001
+# gregion[1].g_il = 0.001
+# gregion[1].g_et = 0.001
+# gregion[1].g_it = 0.001
+# gregion[1].g_en = 0.001
+# gregion[1].g_in = 0.001
 
 # Local activation time calculation
 num_LATs = 1

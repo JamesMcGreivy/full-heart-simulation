@@ -4,6 +4,8 @@ input_mesh_header="instance_001"
 output_mesh_dir="${input_mesh_dir}_lowres"
 output_mesh_header="${input_mesh_header}_lowres"
 
+export OMP_NUM_THREADS=80
+
 mkdir -p ${output_mesh_dir}
 
 input_mesh_path="${input_mesh_dir}/${input_mesh_header}"
@@ -14,15 +16,15 @@ if ls ${output_mesh_path}* 1> /dev/null 2>&1; then
     rm ${output_mesh_path}*
 fi
 
-meshtool resample mesh \
+/work/submit/mcgreivy/openCARP/external/meshtool/meshtool resample mesh \
 -msh=${input_mesh_path} \
--avrg=1.4 \
+-avrg=1000 \
 -outmsh=${output_mesh_path} \
 -ifmt=carp_txt \
 -ofmt=carp_txt \
--tags=0
+-tags=0 \
 
-meshtool extract surface \
+/work/submit/mcgreivy/openCARP/external/meshtool/meshtool extract surface \
 -msh=${output_mesh_path} \
 -surf=${output_mesh_path} \
 -ifmt=carp_txt \

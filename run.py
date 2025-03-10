@@ -20,10 +20,10 @@ def parser():
                         type=float, default=500.0,
                         help='Duration of simulation (ms).')
     parser.add_argument('--stim-strength',
-                        type=float, default=50,
+                        type=float, default=-40,
                         help='Stimulus strength (mV).')
     parser.add_argument('--mesh-base',
-                        type=str, default='./data/instance_001_lowres',
+                        type=str, default='./data/instance_001',
                         help='Directory + basename for path to mesh files.')
     return parser
 
@@ -43,7 +43,7 @@ def run(args, job):
     cmd = tools.carp_cmd(os.path.join(EXAMPLE_DIR, 'simple.par'))
     
     # Override mesh paths from the parameter file
-    cmd += ['-meshname', os.path.join(mesh_base, "instance_001_lowres")]
+    cmd += ['-meshname', os.path.join(mesh_base, os.path.basename(mesh_base))]
     
     # Override parameter file settings as needed
     cmd += ['-simID', job.ID,

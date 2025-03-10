@@ -87,6 +87,9 @@ class OpenCARPMeshReader:
                 # Parse the line for a tetrahedron (Tt format)
                 if line.startswith('Tt'):
                     parts = line.split()
+
+                    if len(parts) < 6:
+                        continue
                     
                     # Extract the 4 vertex indices
                     indices = [int(parts[1]), int(parts[2]), int(parts[3]), int(parts[4])]
@@ -319,6 +322,80 @@ def precompute_element_directions(fiber_dirs, sheet_dirs, sheet_normal_dirs, tet
         element_normal_dirs[i] = average_unit_vector(sheet_normal_dirs[tet_nodes])
     
     return element_fiber_dirs, element_sheet_dirs, element_normal_dirs
+
+def read_lon_file(filename):
+    """
+    Read fiber and sheet directions from a .lon file created for openCARP.
+    
+    Parameters:
+    -----------
+    filename : str
+        Path to the .lon file
+        
+    Returns:
+    --------
+    tuple:
+        - fiber_directions: numpy array of shape (n_elements, 3) containing fiber directions
+        - sheet_directions: numpy array of shape (n_elements, 3) containing sheet directions
+    """
+    import numpy as np
+    from tqdm import tqdm
+    
+    print(f"Reading data from {filename}...")
+    
+    # First, count the number of elements in the file
+    with open(filename, 'r') as f:
+        # Read the header line (should be '2' based on the write function)
+        header = f.readline().strip()
+        if header != '2':
+            raise ValueError(f"Expected header value '2', but got '{header}'")
+        
+        # Count the number of non-empty lines (each line = one element)
+        lines = [line.strip() for line in f if line.strip()]
+        n_elements = len(lines)
+    
+    print(f"Found {n_elements} elements in the .lon file")
+    
+    # Initialize arrays to store the directions
+    fiber_directions = np.zeros((n_elements, 3))
+    sheet_directions = np.zeros((n_elements, 3))
+    
+    # Read the file again to extract the directions
+    with open(filename, 'r') as f:
+        # Skip the header
+        next(f)
+        
+        for i, line in enumerate(tqdm(f, total=n_elements, desc="Reading .lon file")):
+            if not line.strip():
+                continue
+                
+            # Parse the line: first 3 values are fiber direction, next 3 are sheet direction
+            values = list(map(float, line.strip().split()))
+            
+            if len(values) != 6:
+                raise ValueError(f"Expected 6 values per line, but got {len(values)} at line {i+2}")
+            
+            fiber_directions[i] = values[0:3]
+            sheet_directions[i] = values[3:6]
+    
+    # Normalize the vectors to ensure unit length
+    fiber_norm = np.linalg.norm(fiber_directions, axis=1, keepdims=True)
+    sheet_norm = np.linalg.norm(sheet_directions, axis=1, keepdims=True)
+    
+    # Avoid division by zero
+    fiber_norm[fiber_norm == 0] = 1
+    sheet_norm[sheet_norm == 0] = 1
+    
+    fiber_directions = fiber_directions / fiber_norm
+    sheet_directions = sheet_directions / sheet_norm
+    
+    # Calculate and print orthogonality check
+    dot_product = np.sum(fiber_directions * sheet_directions, axis=1)
+    max_dot = np.max(np.abs(dot_product))
+    print(f"Maximum absolute dot product between fiber and sheet directions: {max_dot:.6f}")
+    
+    print(f"Successfully read fiber and sheet directions from {filename}")
+    return fiber_directions, sheet_directions
 
 def write_lon_file(filename, fiber_directions, sheet_directions, sheet_normal_directions, tetrahedra, batch_size=10000):
     """
@@ -1124,7 +1201,7 @@ def convert_to_opencarp(volume_mesh, surface_mesh, output_prefix, output_path):
     
     print(f"Created {output_prefix}.surf with surface triangles")
 
-def scale_pts_file(file_path, scale_factor=10000):
+def scale_pts_file(file_path, scale_factor=1000):
     """
     Read a .pts file, scale the points by the given factor, and save back to the same file.
     
